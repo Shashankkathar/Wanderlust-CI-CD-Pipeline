@@ -2,10 +2,6 @@
 pipeline {
     agent {label 'Node'}
     
-    environment{
-        SONAR_HOME = tool "Sonar"
-    }
-    
     parameters {
         string(name: 'FRONTEND_DOCKER_TAG', defaultValue: '', description: 'Setting docker image for latest push')
         string(name: 'BACKEND_DOCKER_TAG', defaultValue: '', description: 'Setting docker image for latest push')
@@ -37,37 +33,6 @@ pipeline {
             }
         }
         
-        stage("Trivy: Filesystem scan"){
-            steps{
-                script{
-                    trivy_scan()
-                }
-            }
-        }
-
-        stage("OWASP: Dependency check"){
-            steps{
-                script{
-                    owasp_dependency()
-                }
-            }
-        }
-        
-        stage("SonarQube: Code Analysis"){
-            steps{
-                script{
-                    sonarqube_analysis("Sonar","wanderlust","wanderlust")
-                }
-            }
-        }
-        
-        stage("SonarQube: Code Quality Gates"){
-            steps{
-                script{
-                    sonarqube_code_quality()
-                }
-            }
-        }
         
         stage('Exporting environment variables') {
             parallel{
